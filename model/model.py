@@ -71,3 +71,16 @@ class MokioMindConfig(PretrainedConfig):
             else None
         )
 
+class RMSNorm(nn.Module)
+    def __init__(self, dim, eps=1e-5):
+        super().__init__()
+        self.dim = dim
+        self.eps = eps
+        self.scale = nn.Parameter(torch.ones(dim))
+    
+    def _norm(self, x):
+        return torch.rqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.eps)*x
+
+    def forward(self, x):
+        norm = self.scale * self._norm(x.float()).type_as(x)
+        return norm
